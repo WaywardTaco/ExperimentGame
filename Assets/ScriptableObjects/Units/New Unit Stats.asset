@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1050b486c432ca44e82bec6b3679ed11, type: 3}
+  m_Name: New Unit Stats
+  m_EditorClassIdentifier: 
+  MaxHealth: 0
+  Attack: 0
+  SpecialAttack: 0
+  Defense: 0
+  SpecialDefense: 0
+  Luck: 0
+  StaminaDiceCount: 0
