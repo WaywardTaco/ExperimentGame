@@ -4,44 +4,67 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour
 {
-    /// <summary>
-    /// The dimensions of one side of the battlefield ([0] = length; [1] = depth)
-    /// </summary>
-    public static readonly int[] BATTLEFIELD_DIMENSIONS = { 3, 2 };
+    private readonly Dictionary<string, CombatPhase> _phases = new Dictionary<string, CombatPhase>{
+        { "StartCombatPhase"    , new StartCombatPhase()    },
+        { "StartRoundPhase"     , new StartRoundPhase()     },
+        { "UnitTurnPhase"       , new UnitTurnPhase()       },
+        { "EnemyActPhase"       , new EnemyActPhase()       },
+        { "EndCombatPhase"      , new EndCombatPhase()      },
+    };
 
+    private CombatPhase _currentPhase;
 
-    public void BeginCombat(){
-
+    public void StartCombat(){
+        SetPhase("StartCombatPhase");
     }
 
-    private void EndCombat(){
+    public string GetPhaseTag(CombatPhase phase){
+        foreach(var phasePair in _phases){
+            if(phase == phasePair.Value)
+                return phasePair.Key;
+        }
 
+        return null;
     }
 
-    private void ProcessTurn(Combatant combatant){
-        if(combatant == null){
-            Debug.LogWarning("[WARN]: Combatant missing!");
+    private void SetPhase(string phaseTag){
+        if(phaseTag == null){
+            _currentPhase?.EndPhase();
+            _currentPhase = null;
+        }
+
+        if(!_phases.ContainsKey(phaseTag))
             return;
-        }
 
+        _currentPhase?.EndPhase();
+
+        _currentPhase = _phases[phaseTag];
+        _currentPhase.EnterPhase();
+    }
+
+    void Update()
+    {
+        _currentPhase.PhaseLogic();
+        if(_currentPhase.WillExitPhase)
+            SetPhase(_currentPhase.NextPhase);
+    }
+
+    private void Initialize(){
 
     }
 
-    public void CompleteMoveCallback(){
-
-    }
-
-
+    public static CombatManager Instance { get; private set; } = null;
     void Start(){
-        if(_sharedInstance != null)
+        if(Instance == null)
+            Instance = this;
+        else
             Destroy(this);
-        else 
-            _sharedInstance = this;
+
+        Initialize();
     }
-    private static CombatManager _sharedInstance;
-    public static CombatManager Instance {
-        get {  
-            return _sharedInstance;
-        }
+    void OnDestroy()
+    {
+        if(Instance == this)
+            Instance = null;
     }
 }
